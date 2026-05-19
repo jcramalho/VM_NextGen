@@ -1,6 +1,13 @@
 {
     "examples":[
         {
+            "title": "Soma de N números lidos e armazenados",
+            "category": "Categoria 2",
+            "description": "lê N, a seguir lê N elementos, guarda-os num array, calcula a sua soma, imprime este valor.",
+            "difficulty": 2,
+            "file": "somaNelementosArray.vm"
+        },
+        {
             "title": "Maior de 2 números lidos",
             "category": "Categoria 1",
             "description": "Lê dois números, guarda-os, compara-os e imprime o maior.",
