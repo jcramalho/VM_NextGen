@@ -1,6 +1,13 @@
 {
     "examples":[
         {
+            "title": "Chamada a uma função simples",
+            "category": "Categoria 1",
+            "description": "Função simples que escreve 77 no monitor.",
+            "difficulty": 1,
+            "file": "chamada_funcaoSimples.vm"
+        },
+        {
             "title": "Soma de N números lidos e armazenados",
             "category": "Categoria 2",
             "description": "lê N, a seguir lê N elementos, guarda-os num array, calcula a sua soma, imprime este valor.",
