@@ -16,11 +16,13 @@
       <div class="w3-third" style="padding-right:3%; height:95%;">
         <div style="height: 100%; border: 1px solid #ccc;">
           <VueMonacoEditor
-            v-model:value="code"
+            :value="code"
+            @update:value="newValue => code = newValue"
             theme="vs-light"
             language="EWVM"
             :options="{ minimap: { enabled: false }, automaticLayout: true }"
             @beforeMount="handleEditorBeforeMount"
+            @mount="handleEditorMount"
           />
         </div>
       </div>
@@ -236,7 +238,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { ref, shallowRef, computed, onMounted, watch, nextTick } from 'vue'
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor'
 
 // Se VITE_API_URL for '/api', ele vai usar automaticamente http://ewvm.epl.di.uminho.pt/api
@@ -258,6 +260,37 @@ watch(terminal, async () => {
     terminalContainer.value.scrollTop = terminalContainer.value.scrollHeight
   }
 }, { deep: true })
+
+// VARIÁVEIS PARA O MONACO EDITOR
+const editorRef = shallowRef(null)
+const decorations = shallowRef(null) // Vai guardar a coleção de destaques
+
+// Quando o editor carrega na página, guardamos a instância dele
+const handleEditorMount = (editor, monaco) => {
+  editorRef.value = editor
+  decorations.value = editor.createDecorationsCollection()
+}
+
+// Apanhar a linha atual a ser executada no frame (é o índice 0 da array do frame)
+const currentLine = computed(() => currentFrame.value ? currentFrame.value[0] : 0)
+
+// Sempre que a linha mudar (ao clicar <<, <, >, >>), o Monaco atualiza o destaque
+watch(currentLine, (line) => {
+  if (decorations.value) {
+    if (line > 0) {
+      decorations.value.set([{
+        range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
+        options: {
+          isWholeLine: true,
+          className: 'highlight-debug' // A classe CSS que criaremos abaixo
+        }
+      }])
+    } else {
+      // Limpa o destaque se não houver linha a executar
+      decorations.value.set([])
+    }
+  }
+})
 
 const animation = ref([])
 const currentIndex = ref(0)
@@ -418,3 +451,9 @@ const handleEditorBeforeMount = (monaco) => {
   })
 }
 </script>
+<style>
+/* Estilo para a linha destacada no Monaco Editor */
+.highlight-debug {
+  background-color: #ffffa0; /* Um amarelo suave */
+}
+</style>
