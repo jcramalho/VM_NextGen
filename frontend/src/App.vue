@@ -241,64 +241,22 @@
 import { ref, shallowRef, computed, onMounted, watch, nextTick } from 'vue'
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor'
 
-// Se VITE_API_URL for '/api', ele vai usar automaticamente http://ewvm.epl.di.uminho.pt/api
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:50520/api'
 
-// ESTADO REATIVO BASE
+// ==========================================
+// 1. ESTADO REATIVO BASE
+// ==========================================
 const code = ref('start\npushi 10\nwritei\nstop')
 const sessionId = ref('')
-// Puxa sempre a caixa de ouput para baixo
 const terminal = ref([])
-const terminalContainer = ref(null) // Referência direta para a div do HTML
-
-// Observa qualquer alteração no array 'terminal'
-watch(terminal, async () => {
-  // Espera que o Vue atualize o ecrã com a nova linha
-  await nextTick()
-  // Puxa o scroll vertical para o limite máximo da caixa
-  if (terminalContainer.value) {
-    terminalContainer.value.scrollTop = terminalContainer.value.scrollHeight
-  }
-}, { deep: true })
-
-// VARIÁVEIS PARA O MONACO EDITOR
-const editorRef = shallowRef(null)
-const decorations = shallowRef(null) // Vai guardar a coleção de destaques
-
-// Quando o editor carrega na página, guardamos a instância dele
-const handleEditorMount = (editor, monaco) => {
-  editorRef.value = editor
-  decorations.value = editor.createDecorationsCollection()
-}
-
-// Apanhar a linha atual a ser executada no frame (é o índice 0 da array do frame)
-const currentLine = computed(() => currentFrame.value ? currentFrame.value[0] : 0)
-
-// Sempre que a linha mudar (ao clicar <<, <, >, >>), o Monaco atualiza o destaque
-watch(currentLine, (line) => {
-  if (decorations.value) {
-    if (line > 0) {
-      decorations.value.set([{
-        range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
-        options: {
-          isWholeLine: true,
-          className: 'highlight-debug' // A classe CSS que criaremos abaixo
-        }
-      }])
-    } else {
-      // Limpa o destaque se não houver linha a executar
-      decorations.value.set([])
-    }
-  }
-})
-
 const animation = ref([])
 const currentIndex = ref(0)
 const metadata = ref(null)
+
 const needsInput = ref(false)
 const inputValue = ref('')
+const terminalContainer = ref(null) // Referência da div do output
 
-// ESTADO DOS MODAIS
 const showExamples = ref(false)
 const showManual = ref(false)
 const showCredits = ref(false)
@@ -306,7 +264,56 @@ const showCredits = ref(false)
 const manualDocs = ref([])
 const examplesList = ref([])
 
-// INICIALIZAÇÃO
+// Variáveis para o Monaco Editor
+const editorRef = shallowRef(null)
+const decorations = shallowRef(null)
+
+
+// ==========================================
+// 2. ESTADOS COMPUTADOS (VUE REACTIVITY)
+// ==========================================
+const currentFrame = computed(() => animation.value[currentIndex.value] || null)
+const currentOperandStack = computed(() => currentFrame.value ? currentFrame.value[1] : [])
+const currentCallStack = computed(() => currentFrame.value ? currentFrame.value[2] : [])
+const currentStringHeap = computed(() => currentFrame.value ? currentFrame.value[3] : [])
+const currentStructHeap = computed(() => currentFrame.value ? currentFrame.value[4] : [])
+const currentFP = computed(() => (currentFrame.value && currentFrame.value[5] !== -1) ? currentFrame.value[5] : '-')
+const currentLine = computed(() => currentFrame.value ? currentFrame.value[0] : 0) // Agora declarado DEPOIS de currentFrame
+
+
+// ==========================================
+// 3. WATCHERS (OBSERVADORES AUTOMÁTICOS)
+// ==========================================
+
+// Auto-Scroll do Terminal
+watch(terminal, async () => {
+  await nextTick()
+  if (terminalContainer.value) {
+    terminalContainer.value.scrollTop = terminalContainer.value.scrollHeight
+  }
+}, { deep: true })
+
+// Highlight (Destaque) da Linha no Monaco Editor
+watch(currentLine, (line) => {
+  if (decorations.value) {
+    if (line > 0) {
+      decorations.value.set([{
+        range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
+        options: {
+          isWholeLine: true,
+          className: 'highlight-debug'
+        }
+      }])
+    } else {
+      decorations.value.set([])
+    }
+  }
+})
+
+
+// ==========================================
+// 4. INICIALIZAÇÃO (ON MOUNTED)
+// ==========================================
 onMounted(async () => {
   try {
     const initRes = await fetch(`${API_URL}/init`)
@@ -322,23 +329,44 @@ onMounted(async () => {
   }
 })
 
-// PROCESSAMENTO DA MÁQUINA VIRTUAL
+
+// ==========================================
+// 5. FUNÇÕES E LÓGICA
+// ==========================================
+
+// Controlo do Mónaco Editor
+const handleEditorMount = (editor, monaco) => {
+  editorRef.value = editor
+  decorations.value = editor.createDecorationsCollection()
+}
+
+const handleEditorBeforeMount = (monaco) => {
+  monaco.languages.register({ id: 'EWVM' })
+  monaco.languages.setMonarchTokensProvider('EWVM', {
+    tokenizer: {
+      root: [
+        [/[+\-]?\d+/, 'number'],
+        [/".*?"/, 'string'],
+        [/\/\/.*/, 'comment'],
+        [/[A-Za-z_][A-Za-z0-9_]*/, 'keyword'],
+      ]
+    }
+  })
+}
+
+// Comunicação com a Máquina Virtual
 const runCode = () => {
-  // Execução limpa (clique no botão "Run" principal)
   executeAPI(false)
 }
 
 const submitInput = () => {
-  // Retoma da execução após instrução "read"
   if (inputValue.value !== '') {
-    // Adicionar o valor introduzido ao terminal antes de enviar para a API
     terminal.value.push(`<< ${inputValue.value}`)
     executeAPI(true)
   }
 }
 
 const cancelInput = () => {
-  // Esconde o modal, limpa o input e avisa na consola que a execução foi abortada
   needsInput.value = false
   inputValue.value = ''
   terminal.value.push(">> Execução interrompida: Input cancelado pelo utilizador.")
@@ -351,7 +379,6 @@ const executeAPI = async (isResume) => {
       sessionId: sessionId.value
     }
 
-    // Se a VM pediu um input, temos de enviar o estado atual para o backend conseguir retomar
     if (isResume) {
       bodyData.input = inputValue.value
       bodyData.index = currentIndex.value
@@ -370,16 +397,15 @@ const executeAPI = async (isResume) => {
       animation.value = result.data.animation
       currentIndex.value = animation.value.length > 0 ? animation.value.length - 1 : 0
       
-      // A VM avisa que pausou numa instrução "read" se a flag input for 1
       needsInput.value = result.data.input === 1
-      inputValue.value = '' // Limpa a caixa de texto para o próximo read
+      inputValue.value = ''
     }
   } catch (err) {
-    terminal.value = ["Erro de rede ao comunicar com o processador VM."]
+    terminal.value.push("Erro de rede ao comunicar com o processador VM.")
   }
 }
 
-// BUSCA DE EXEMPLOS VIA ENDPOINT DA API
+// Busca de Exemplos e Controlo de Modais
 const fetchExamples = async (orderBy = '') => {
   try {
     const url = orderBy ? `${API_URL}/examples?orderBy=${orderBy}` : `${API_URL}/examples`
@@ -408,7 +434,7 @@ const loadExampleCode = (exampleCode) => {
   }
 }
 
-// BOTÕES DE CONTROLO DO PASSO-A-PASSO
+// Controlo do Passo-a-Passo e Estilos Dinâmicos
 const prevStep = () => {
   if (currentIndex.value > 0) currentIndex.value--
 }
@@ -416,14 +442,6 @@ const prevStep = () => {
 const nextStep = () => {
   if (currentIndex.value < animation.value.length - 1) currentIndex.value++
 }
-
-// ESTADOS COMPUTADOS (VUE REACTIVITY)
-const currentFrame = computed(() => animation.value[currentIndex.value] || null)
-const currentOperandStack = computed(() => currentFrame.value ? currentFrame.value[1] : [])
-const currentCallStack = computed(() => currentFrame.value ? currentFrame.value[2] : [])
-const currentStringHeap = computed(() => currentFrame.value ? currentFrame.value[3] : [])
-const currentStructHeap = computed(() => currentFrame.value ? currentFrame.value[4] : [])
-const currentFP = computed(() => (currentFrame.value && currentFrame.value[5] !== -1) ? currentFrame.value[5] : '-')
 
 const getOperandStackStyle = (index) => {
   let border = '1px solid #ccc'
@@ -434,21 +452,6 @@ const getOperandStackStyle = (index) => {
     color: 'white',
     borderRadius: '4px'
   }
-}
-
-// INICIALIZADOR DA GRAMÁTICA NO EDITOR MONACO
-const handleEditorBeforeMount = (monaco) => {
-  monaco.languages.register({ id: 'EWVM' })
-  monaco.languages.setMonarchTokensProvider('EWVM', {
-    tokenizer: {
-      root: [
-        [/[+\-]?\d+/, 'number'],
-        [/".*?"/, 'string'],
-        [/\/\/.*/, 'comment'],
-        [/[A-Za-z_][A-Za-z0-9_]*/, 'keyword'],
-      ]
-    }
-  })
 }
 </script>
 <style>
