@@ -7,7 +7,10 @@
         <button @click="runCode" class="w3-button w3-padding-small w3-round-large w3-blue-grey" style="margin-right:3px">Run</button>
         <button @click="openExamplesModal" class="w3-button w3-padding-small w3-round-large w3-blue-grey" style="margin-right:3px">Examples</button>
         <button @click="showManual = true" class="w3-button w3-padding-small w3-round-large w3-blue-grey" style="margin-right:3px">Documentation</button>
-        <button @click="showCredits = true" class="w3-button w3-padding-small w3-round-large w3-blue-grey">Credits</button>
+        <button @click="showCredits = true" class="w3-button w3-padding-small w3-round-large w3-blue-grey" style="margin-right:3px">Credits</button>
+        <a href="/ewvm-code.vsix" download="ewvm-code.vsix" class="w3-button w3-padding-small w3-round-large w3-blue-grey" style="text-decoration: none;">
+          <i class="fa fa-download" style="margin-right: 4px;"></i>VSCode Extension
+        </a>
       </div>
     </div>
 
@@ -17,7 +20,7 @@
         <div style="height: 100%; border: 1px solid #ccc;">
           <VueMonacoEditor
             :value="code"
-            @update:value="newValue => code = newValue"
+            @update:value="(newValue: string) => code = newValue"
             theme="vs-light"
             language="EWVM"
             :options="{ minimap: { enabled: false }, automaticLayout: true }"
@@ -28,96 +31,11 @@
       </div>
 
       <div class="w3-twothird" style="display:flex; flex-flow:column; padding-right:1%; height: 100%;">
-        <div class="w3-container w3-border" style="display: flex; flex: 1; background-image: linear-gradient(white , #e9f2fa); padding: 10px;">
-          
-          <div class="w3-quarter" style="height:100%; text-align: center;">
-            <div class="w3-border w3-white w3-margin" style="height:85%; overflow:auto; padding: 5px;">
-              <div v-for="(call, i) in currentCallStack" :key="i" class="w3-padding-small w3-border-bottom">
-                PC: {{ call[0] }} | FP: {{ call[1] }}
-              </div>
-            </div>
-            <span>Call Stack</span>
-          </div>
-
-          <div class="w3-quarter" style="height:100%; text-align: center;">
-            <div class="w3-border w3-white w3-margin" style="height:85%; overflow:auto; display: flex; flex-direction: column-reverse; padding: 5px;">
-              <div v-for="(val, i) in currentOperandStack" :key="i" 
-                   style="padding: 2px 8px; margin-bottom: 3px;"
-                   :style="getOperandStackStyle(i)">
-                {{ val }}
-              </div>
-            </div>
-            <span>Operand Stack</span>
-          </div>
-
-          <div class="w3-half" style="height:100%;">
-            <div style="height:50%; text-align: center;">
-              <div class="w3-border w3-white w3-margin" style="height:70%; overflow:auto;">
-                <div v-for="(str, i) in currentStringHeap" :key="i" class="w3-padding-small w3-border-bottom">{{ str }}</div>
-              </div>
-              <span>String Heap</span>
-            </div>
-            <div style="height:50%; text-align: center;">
-              <div class="w3-border w3-white w3-margin" style="height:70%; overflow:auto;">
-                <div v-for="(struct, i) in currentStructHeap" :key="i" class="w3-padding-small w3-border-bottom">{{ struct }}</div>
-              </div>
-              <span>Struct Heap</span>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="w3-container" style="padding:4px 0;">
-          <button class="w3-btn w3-round w3-small w3-light-grey" @click="currentIndex = 0">&lt;&lt;</button>
-          <button class="w3-btn w3-round w3-small w3-light-grey w3-margin-left" @click="prevStep">&lt;</button>
-          <span class="w3-margin-left w3-margin-right"><b>Step: {{ currentIndex }} / {{ animation.length > 0 ? animation.length - 1 : 0 }}</b></span>
-          <button class="w3-btn w3-round w3-small w3-light-grey" @click="nextStep">&gt;</button>
-          <button class="w3-btn w3-round w3-small w3-light-grey w3-margin-left" @click="currentIndex = animation.length > 0 ? animation.length - 1 : 0">&gt;&gt;</button>
-          
-          <span class="w3-margin-left" style="color:blue;">GP: 0</span>
-          <span class="w3-margin-left" style="color:red;">FP: {{ currentFP }}</span>
-          <span class="w3-margin-left" style="color:green;">SP: {{ currentOperandStack.length }}</span>
-        </div>
-
-        <div style="height: 140px;" class="w3-margin-bottom">
-          <b class="w3-text-blue-grey">Output:</b>
-          <div 
-            ref="terminalContainer" 
-            class="w3-border w3-white" 
-            style="height: 80%; padding:5px; overflow:auto; font-family: monospace; white-space: pre-wrap;"
-          >
-            <div v-for="(line, i) in terminal" :key="i">{{ line }}</div>
-          </div>
-        </div>   
-
-      </div>
-    </div>
-
-    <!--   MODAL de input   -->
-
-    <div v-if="needsInput" class="w3-modal" style="display:block; z-index: 9999; height: calc(100vh - 160px); padding-top: 50px;">
-      <div class="w3-modal-content w3-animate-top w3-card-4 w3-round-large" style="max-width: 450px; padding: 10px;">
-        <header class="w3-container w3-center">
-          <span @click="cancelInput" class="w3-button w3-display-topright w3-round-large w3-hover-red">&times;</span>
-          <h3 class="w3-text-blue-grey"><b>Aguardando Input</b></h3>
-        </header>
-        
-        <div class="w3-container w3-padding-16">
-          <p class="w3-text-grey w3-center">A Máquina Virtual encontrou uma instrução <code>read</code> e encontra-se em pausa. Insira um valor para continuar a execução:</p>
-          
-          <input 
-            v-model="inputValue" 
-            @keyup.enter="submitInput"
-            class="w3-input w3-border w3-round w3-margin-bottom" 
-            style="text-align: center; font-size: 1.2em;"
-            autofocus 
-            placeholder="Escreve aqui..."
-          />
-          
-          <button @click="submitInput" class="w3-button w3-blue-grey w3-round w3-block">
-            <b>Confirmar</b> <i class="fa fa-check w3-margin-left"></i>
-          </button>
-        </div>
+        <VMPanel
+          ref="vmPanelRef"
+          :code="code"
+          @stepChange="handleStepChange"
+        />
       </div>
     </div>
 
@@ -137,7 +55,7 @@
 
         <div class="w3-container" style="max-height:450px; overflow:auto;">
           <div v-if="!Array.isArray(examplesList)">
-            <div v-for="(group, key) in examplesList" :key="key" class="w3-margin-bottom">
+            <div v-for="(group, key) in (examplesList as any)" :key="key" class="w3-margin-bottom">
               <h3 class="w3-border-bottom w3-text-blue-grey" style="padding-bottom:5px;"><b>{{ key }}</b></h3>
               <div v-for="e in group" :key="e.title" class="w3-padding-small w3-hover-light-grey w3-border-bottom" style="display:flex; justify-content:space-between; align-items:center;">
                 <div>
@@ -178,7 +96,7 @@
                 <div v-for="(sub, subIdx) in category[1]" :key="subIdx" class="w3-margin-bottom">
                   <h4 class="w3-text-indigo"><b>{{ sub[0] }}</b></h4>
                   <table class="w3-table-all w3-small">
-                    <tr v-for="(desc, inst) in sub[1]" :key="inst">
+                    <tr v-for="(desc, inst) in (sub[1] as any)" :key="inst">
                       <td style="width:120px;"><b class="w3-text-red">{{ inst }}</b></td>
                       <td>{{ desc }}</td>
                     </tr>
@@ -188,7 +106,7 @@
 
               <div v-else>
                 <table class="w3-table-all w3-small">
-                  <tr v-for="(desc, inst) in category[1]" :key="inst">
+                  <tr v-for="(desc, inst) in (category[1] as any)" :key="inst">
                     <td style="width:120px;"><b class="w3-text-red">{{ inst }}</b></td>
                     <td>{{ desc }}</td>
                   </tr>
@@ -229,7 +147,7 @@
               <tr><td><b>Prof. José Carlos Ramalho</b></td><td>Desde sempre...</td><td>O DevOps sempre de serviço. Criador da nova versão.</td></tr>
             </tbody>
           </table>
-          <p class="w3-small w3-right-align w3-text-grey" v-if="metadata"><b>Versão da API:</b> {{ metadata.version }} ({{ metadata.vdate }})</p>
+          <p class="w3-small w3-right-align w3-text-grey" v-if="metadata"><b>Versão:</b> {{ metadata.version }} ({{ metadata.vdate }})</p>
         </div>
       </div>
     </div>
@@ -237,186 +155,80 @@
   </div>
 </template>
 
-<script setup>
-import { ref, shallowRef, computed, onMounted, watch, nextTick } from 'vue'
+<script setup lang="ts">
+import { ref, shallowRef } from 'vue'
 import { VueMonacoEditor } from '@guolao/vue-monaco-editor'
+import { VMPanel,  } from 'ewvm-vue'
+import { Example, ExampleGroupMap, getExamples } from './services/exampleService'
+import { manualDocs } from './data/manual'
+import { metadata } from './data/metadata'
+import { Instruction } from 'ewvm'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:50520/api'
+const code = ref<string>('start\npushi 10\nwritei\nstop')
+const vmPanelRef = ref<InstanceType<typeof VMPanel> | null>(null)
 
-// ==========================================
-// 1. ESTADO REATIVO BASE
-// ==========================================
-const code = ref('start\npushi 10\nwritei\nstop')
-const sessionId = ref('')
-const terminal = ref([])
-const animation = ref([])
-const currentIndex = ref(0)
-const metadata = ref(null)
+const showExamples = ref<boolean>(false)
+const showManual = ref<boolean>(false)
+const showCredits = ref<boolean>(false)
+const examplesList = ref<Example[] | ExampleGroupMap>([])
 
-const needsInput = ref(false)
-const inputValue = ref('')
-const terminalContainer = ref(null) // Referência da div do output
+const editorRef = shallowRef<any>(null)
+const decorations = shallowRef<any>(null)
 
-const showExamples = ref(false)
-const showManual = ref(false)
-const showCredits = ref(false)
-
-const manualDocs = ref([])
-const examplesList = ref([])
-
-// Variáveis para o Monaco Editor
-const editorRef = shallowRef(null)
-const decorations = shallowRef(null)
-
-
-// ==========================================
-// 2. ESTADOS COMPUTADOS (VUE REACTIVITY)
-// ==========================================
-const currentFrame = computed(() => animation.value[currentIndex.value] || null)
-const currentOperandStack = computed(() => currentFrame.value ? currentFrame.value[1] : [])
-const currentCallStack = computed(() => currentFrame.value ? currentFrame.value[2] : [])
-const currentStringHeap = computed(() => currentFrame.value ? currentFrame.value[3] : [])
-const currentStructHeap = computed(() => currentFrame.value ? currentFrame.value[4] : [])
-const currentFP = computed(() => (currentFrame.value && currentFrame.value[5] !== -1) ? currentFrame.value[5] : '-')
-const currentLine = computed(() => currentFrame.value ? currentFrame.value[0] : 0) // Agora declarado DEPOIS de currentFrame
-
-
-// ==========================================
-// 3. WATCHERS (OBSERVADORES AUTOMÁTICOS)
-// ==========================================
-
-// Auto-Scroll do Terminal
-watch(terminal, async () => {
-  await nextTick()
-  if (terminalContainer.value) {
-    terminalContainer.value.scrollTop = terminalContainer.value.scrollHeight
-  }
-}, { deep: true })
-
-// Highlight (Destaque) da Linha no Monaco Editor
-watch(currentLine, (line) => {
-  if (decorations.value) {
-    if (line > 0) {
-      decorations.value.set([{
-        range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
-        options: {
-          isWholeLine: true,
-          className: 'highlight-debug'
-        }
-      }])
-    } else {
-      decorations.value.set([])
-    }
-  }
-})
-
-
-// ==========================================
-// 4. INICIALIZAÇÃO (ON MOUNTED)
-// ==========================================
-onMounted(async () => {
-  try {
-    const initRes = await fetch(`${API_URL}/init`)
-    const initData = await initRes.json()
-    sessionId.value = initData.data.sessionId
-    metadata.value = initData.data.metadados
-
-    const manualRes = await fetch(`${API_URL}/manual`)
-    const manualData = await manualRes.json()
-    manualDocs.value = manualData.data
-  } catch (err) {
-    console.error("Erro ao ligar à API:", err)
-  }
-})
-
-
-// ==========================================
-// 5. FUNÇÕES E LÓGICA
-// ==========================================
-
-// Controlo do Mónaco Editor
-const handleEditorMount = (editor, monaco) => {
+const handleEditorMount = (editor: any) => {
   editorRef.value = editor
   decorations.value = editor.createDecorationsCollection()
 }
 
-const handleEditorBeforeMount = (monaco) => {
+const insts = new Array<string>()
+for (const key of Object.keys(Instruction)) {
+  if (isNaN(Number(key))) {
+    insts.push(key)
+  }
+}
+
+let instsRegex = insts.sort((a, b) => a.length - b.length).reverse().join('|')
+instsRegex = instsRegex + '|' + instsRegex.toLowerCase()
+
+const handleEditorBeforeMount = (monaco: any) => {
   monaco.languages.register({ id: 'EWVM' })
   monaco.languages.setMonarchTokensProvider('EWVM', {
     tokenizer: {
       root: [
         [/[+\-]?\d+/, 'number'],
         [/".*?"/, 'string'],
+        [new RegExp(instsRegex, 'i'), 'keyword'],
         [/\/\/.*/, 'comment'],
-        [/[A-Za-z_][A-Za-z0-9_]*/, 'keyword'],
+        [/[A-Za-z_][A-Za-z0-9_]*/, 'identifier']
       ]
     }
   })
 }
 
-// Comunicação com a Máquina Virtual
+const handleStepChange = (line: number) => {
+  if (decorations.value) {
+    if (line > 0) {
+      decorations.value.set([
+        {
+          range: { startLineNumber: line, startColumn: 1, endLineNumber: line, endColumn: 1 },
+          options: {
+            isWholeLine: true,
+            className: 'highlight-debug'
+          }
+        }
+      ])
+    } else {
+      decorations.value.set([])
+    }
+  }
+}
+
 const runCode = () => {
-  executeAPI(false)
+  vmPanelRef.value?.runCode(code.value)
 }
 
-const submitInput = () => {
-  if (inputValue.value !== '') {
-    terminal.value.push(`<< ${inputValue.value}`)
-    executeAPI(true)
-  }
-}
-
-const cancelInput = () => {
-  needsInput.value = false
-  inputValue.value = ''
-  terminal.value.push(">> Execução interrompida: Input cancelado pelo utilizador.")
-}
-
-const executeAPI = async (isResume) => {
-  try {
-    const bodyData = {
-      code: code.value,
-      sessionId: sessionId.value
-    }
-
-    if (isResume) {
-      bodyData.input = inputValue.value
-      bodyData.index = currentIndex.value
-      bodyData.terminal = terminal.value
-    }
-
-    const res = await fetch(`${API_URL}/run`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bodyData)
-    })
-    
-    const result = await res.json()
-    if (result.success) {
-      terminal.value = result.data.terminal
-      animation.value = result.data.animation
-      currentIndex.value = animation.value.length > 0 ? animation.value.length - 1 : 0
-      
-      needsInput.value = result.data.input === 1
-      inputValue.value = ''
-    }
-  } catch (err) {
-    terminal.value.push("Erro de rede ao comunicar com o processador VM.")
-  }
-}
-
-// Busca de Exemplos e Controlo de Modais
-const fetchExamples = async (orderBy = '') => {
-  try {
-    const url = orderBy ? `${API_URL}/examples?orderBy=${orderBy}` : `${API_URL}/examples`
-    const res = await fetch(url)
-    const result = await res.json()
-    if (result.success) {
-      examplesList.value = result.data.exemplos
-    }
-  } catch (err) {
-    console.error("Erro ao ir buscar os exemplos:", err)
-  }
+const fetchExamples = (orderBy: string = '') => {
+  examplesList.value = getExamples(orderBy)
 }
 
 const openExamplesModal = () => {
@@ -424,39 +236,17 @@ const openExamplesModal = () => {
   showExamples.value = true
 }
 
-const loadExampleCode = (exampleCode) => {
+const loadExampleCode = (exampleCode: string) => {
   if (exampleCode) {
     code.value = exampleCode
-    animation.value = []
-    terminal.value = []
-    currentIndex.value = 0
+    vmPanelRef.value?.reset()
     showExamples.value = false
   }
 }
-
-// Controlo do Passo-a-Passo e Estilos Dinâmicos
-const prevStep = () => {
-  if (currentIndex.value > 0) currentIndex.value--
-}
-
-const nextStep = () => {
-  if (currentIndex.value < animation.value.length - 1) currentIndex.value++
-}
-
-const getOperandStackStyle = (index) => {
-  let border = '1px solid #ccc'
-  if (index === currentFP.value) border = '3px solid red'
-  return {
-    border: border,
-    background: '#607d8b',
-    color: 'white',
-    borderRadius: '4px'
-  }
-}
 </script>
+
 <style>
-/* Estilo para a linha destacada no Monaco Editor */
 .highlight-debug {
-  background-color: #ffffa0; /* Um amarelo suave */
+  background-color: #ffffa0;
 }
 </style>
