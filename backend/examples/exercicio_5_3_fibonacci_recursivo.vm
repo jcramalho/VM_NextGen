@@ -1,0 +1,66 @@
+start
+    pushs "Calcular Fibonacci recursivo de N = "
+    writes
+    read
+    atoi
+
+    pusha fibrec
+    call
+
+    pushs "Resultado: "
+    writes
+    writei
+    writeln
+stop
+
+// -------------------------------------------------------------------
+// fib_rec(n): n em fp[-1]
+// Devolve fib(n) em fp[-1]
+// -------------------------------------------------------------------
+fibrec:
+    // Caso n == 0
+    pushfp
+    load -1
+    pushi 0
+    equal
+    jz checkum
+
+    pushi 0
+    storel -1
+    return
+
+checkum:
+    // Caso n == 1
+    pushfp
+    load -1
+    pushi 1
+    equal
+    jz recfibpasso
+
+    pushi 1
+    storel -1
+    return
+
+recfibpasso:
+    // 1. fib(n - 1)
+    pushfp
+    load -1
+    pushi 1
+    sub
+    pusha fibrec
+    call       // Topo tem fib(n - 1)
+
+    // 2. fib(n - 2)
+    pushfp
+    load -1
+    pushi 2
+    sub
+    pusha fibrec
+    call       // Topo tem fib(n - 2), subtopo tem fib(n - 1)
+
+    // 3. Somar fib(n - 1) + fib(n - 2)
+    add
+
+    // Guardar no retorno fp[-1]
+    storel -1
+    return

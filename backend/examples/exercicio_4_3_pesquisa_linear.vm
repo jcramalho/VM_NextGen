@@ -1,0 +1,80 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: addr
+pushi 0    // gp[2]: chave K
+pushi 0    // gp[3]: i
+pushi 0    // gp[4]: idx_encontrado (-1)
+
+start
+    read
+    atoi
+    storeg 0
+
+    pushg 0
+    allocn
+    storeg 1
+
+    // Leitura do array
+    pushi 0
+    storeg 3
+lpread:
+    pushg 3
+    pushg 0
+    inf
+    jz fimpread
+    pushg 1
+    pushg 3
+    read
+    atoi
+    storen
+    pushg 3
+    pushi 1
+    add
+    storeg 3
+    jump lpread
+fimpread:
+
+    // Leitura da chave K
+    read
+    atoi
+    storeg 2
+
+    // idx_encontrado = -1
+    pushi -1
+    storeg 4
+
+    // Pesquisa
+    pushi 0
+    storeg 3
+loopsearch:
+    pushg 3
+    pushg 0
+    inf
+    jz fimsearch
+
+    // Comparar arr[i] == K
+    pushg 1
+    pushg 3
+    loadn
+    pushg 2
+    equal
+    jz proxsearch
+
+    // Encontrou!
+    pushg 3
+    storeg 4
+    jump fimsearch
+
+proxsearch:
+    pushg 3
+    pushi 1
+    add
+    storeg 3
+    jump loopsearch
+
+fimsearch:
+    pushs "Indice da chave no array: "
+    writes
+    pushg 4
+    writei
+    writeln
+stop

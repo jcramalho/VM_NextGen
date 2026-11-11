@@ -1,0 +1,42 @@
+start
+    // Chamar maximo(35, 84)
+    pushi 35       // Argumento a: fp[-2]
+    pushi 84       // Argumento b: fp[-1]
+    pusha funcmax
+    call
+
+    // O retorno substituiu fp[-2], logo fica no topo da pilha
+    pushs "Resultado retornado pela funcao: "
+    writes
+    writei
+    writeln
+stop
+
+// -------------------------------------------------------------------
+// Funcao func_max(a, b)
+// a = fp[-2], b = fp[-1]
+// -------------------------------------------------------------------
+funcmax:
+    pushfp
+    load -2    // a
+    pushfp
+    load -1    // b
+    sup
+    jz bvence
+
+avence:
+    // Guarda a no offset -2 (onde ficara o retorno)
+    pushfp
+    load -2
+    storel -2
+    jump retmax
+
+bvence:
+    // Guarda b no offset -2
+    pushfp
+    load -1
+    storel -2
+
+retmax:
+    // Descartar o argumento b para deixar apenas o retorno
+    return

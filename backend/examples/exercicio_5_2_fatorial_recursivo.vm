@@ -1,0 +1,49 @@
+start
+    pushs "Introduza N para fatorial recursivo: "
+    writes
+    read
+    atoi       // Argumento N
+
+    pusha fatrec
+    call
+
+    pushs "Fatorial Recursivo = "
+    writes
+    writei
+    writeln
+stop
+
+// -------------------------------------------------------------------
+// fat_rec(n): n esta em fp[-1]
+// Devolve n! substituindo o valor em fp[-1]
+// -------------------------------------------------------------------
+fatrec:
+    pushfp
+    load -1
+    pushi 1
+    infeq
+    jz passorecursivo
+
+casobase:
+    pushi 1
+    storel -1
+    return
+
+passorecursivo:
+    // Chamada recursiva: fat_rec(n - 1)
+    pushfp
+    load -1
+    pushi 1
+    sub        // n - 1
+
+    pusha fatrec
+    call       // Retorna (n - 1)! no topo da pilha
+
+    // Multiplicar por n: n * fat_rec(n - 1)
+    pushfp
+    load -1
+    mul
+
+    // Guardar resultado na posicao de retorno fp[-1]
+    storel -1
+    return

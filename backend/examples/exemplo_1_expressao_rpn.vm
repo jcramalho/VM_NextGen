@@ -1,0 +1,22 @@
+start
+    // 1. Calcular (15 + 25) * 3
+    pushi 15
+    pushi 25
+    add
+    pushi 3
+    mul
+
+    // 2. Calcular 50 / 2
+    pushi 50
+    pushi 2
+    div
+
+    // 3. Subtrair os dois resultados parciais
+    sub
+
+    // 4. Imprimir o resultado final
+    pushs "Resultado de ((15+25)*3) - (50/2) = "
+    writes
+    writei
+    writeln
+stop

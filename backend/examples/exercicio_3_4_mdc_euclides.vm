@@ -1,0 +1,48 @@
+pushi 0    // gp[0]: A
+pushi 0    // gp[1]: B
+pushi 0    // gp[2]: resto
+
+start
+    pushs "Introduza o valor de A: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    pushs "Introduza o valor de B: "
+    writes
+    read
+    atoi
+    storeg 1
+
+loopmdc:
+    // Enquanto B != 0
+    pushg 1
+    pushi 0
+    equal
+    not
+    jz fimmdc
+
+    // resto = A % B
+    pushg 0
+    pushg 1
+    mod
+    storeg 2
+
+    // A = B
+    pushg 1
+    storeg 0
+
+    // B = resto
+    pushg 2
+    storeg 1
+
+    jump loopmdc
+
+fimmdc:
+    pushs "MDC = "
+    writes
+    pushg 0
+    writei
+    writeln
+stop

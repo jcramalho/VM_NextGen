@@ -1,54 +1,165 @@
 {
-    "examples":[
+    "examples": [
         {
-            "title": "Chamada a uma função simples",
-            "category": "Categoria 1",
-            "description": "Função simples que escreve 77 no monitor.",
+            "title": "N1: Avaliação de Expressão Pós-Fixada (RPN)",
+            "category": "Nível 1 - Aritmética e I/O",
+            "description": "Calcula a expressão ((15+25)*3) - (50/2) usando notação pós-fixada na pilha.",
             "difficulty": 1,
-            "file": "chamada_funcaoSimples.vm"
+            "file": "exemplo_1_expressao_rpn.vm"
         },
         {
-            "title": "Soma de N números lidos e armazenados",
-            "category": "Categoria 2",
-            "description": "lê N, a seguir lê N elementos, guarda-os num array, calcula a sua soma, imprime este valor.",
+            "title": "N1: Perímetro e Área de um Retângulo",
+            "category": "Nível 1 - Aritmética e I/O",
+            "description": "Lê base e altura do teclado e calcula o perímetro (2*(b+h)) e área (b*h).",
+            "difficulty": 1,
+            "file": "exercicio_1_1_retangulo.vm"
+        },
+        {
+            "title": "N1: Conversor de Temperatura (Celsius para Fahrenheit)",
+            "category": "Nível 1 - Aritmética e I/O",
+            "description": "Lê graus Celsius, converte para float (itof) e calcula Fahrenheit: (C * 1.8) + 32.0.",
+            "difficulty": 1,
+            "file": "exercicio_1_2_celsius_fahrenheit.vm"
+        },
+        {
+            "title": "N1: Manipulação Pura de Pilha (SWAP, DUP e POP)",
+            "category": "Nível 1 - Aritmética e I/O",
+            "description": "Sem variáveis globais, lê x e calcula 2*x^2 + 5*x manipulando apenas o topo da pilha.",
+            "difficulty": 1,
+            "file": "exercicio_1_3_manipulacao_pilha.vm"
+        },
+        {
+            "title": "N2: Verificação de Par ou Ímpar (IF-THEN-ELSE)",
+            "category": "Nível 2 - Condicionais (IF-ELSE)",
+            "description": "Lê um número, calcula resto por 2 (mod) e bifurca com jz e jump.",
             "difficulty": 2,
-            "file": "somaNelementosArray.vm"
+            "file": "exemplo_2_par_impar.vm"
         },
         {
-            "title": "Maior de 2 números lidos",
-            "category": "Categoria 1",
-            "description": "Lê dois números, guarda-os, compara-os e imprime o maior.",
-            "difficulty": 1,
-            "file": "maior2numLidos.vm"
+            "title": "N2: Maior de 2 Números Lidos",
+            "category": "Nível 2 - Condicionais (IF-ELSE)",
+            "description": "Lê dois inteiros A e B, compara-os com sup e imprime o maior.",
+            "difficulty": 2,
+            "file": "exercicio_2_1_maior_2_numeros.vm"
         },
         {
-            "title": "Smallest Number",
-            "category": "Categoria 1",
-            "description": "Selects the smaller number in the array.",
-            "difficulty": 1,
-            "file": "menor.vm"
+            "title": "N2: Máximo de 3 Números Lidos (A, B, C)",
+            "category": "Nível 2 - Condicionais (IF-ELSE)",
+            "description": "Lê 3 números e determina o maior através de seleções condicionais aninhadas.",
+            "difficulty": 2,
+            "file": "exercicio_2_2_maximo_3_numeros.vm"
         },
         {
-            "title": "Array Multiplication",
-            "category": "Categoria A265",
-            "description": "Multiplies all the written numbers.",
-            "difficulty": 1,
-            "file": "produtoN.vm"
+            "title": "N2: Classificação de Notas Escolares",
+            "category": "Nível 2 - Condicionais (IF-ELSE)",
+            "description": "Lê nota de 0 a 20 e imprime classificação: Excelente (>=16), Suficiente (>=10) ou Reprovado.",
+            "difficulty": 2,
+            "file": "exercicio_2_3_classificacao_notas.vm"
         },
         {
-            "title": "Square Repeat",
-            "category": "Cat",
-            "description": "Calculates the square number of the written number and all its inferior numbers",
-            "difficulty": 1,
-            "file": "square-repeat.vm"
+            "title": "N3: Somatório de 1 a N (Ciclo Iterativo)",
+            "category": "Nível 3 - Ciclos Iterativos",
+            "description": "Calcula a soma 1 + 2 + ... + N usando o padrão canónico de ciclo while com jz e jump.",
+            "difficulty": 3,
+            "file": "exemplo_3_somatorio_1_a_n.vm"
         },
         {
-            "title": "Square Repeat - Function",
-            "category": "Functions",
-            "description": "Calculates the square number of the written number and all its inferior numbers",
-            "difficulty": 1,
-            "file": "square-repeat-function.vm"
+            "title": "N3: Fatorial de um Número Inteiro (N!)",
+            "category": "Nível 3 - Ciclos Iterativos",
+            "description": "Lê N e calcula N! = N * (N-1) * ... * 1 de forma iterativa com acumulador.",
+            "difficulty": 3,
+            "file": "exercicio_3_1_fatorial_iterativo.vm"
+        },
+        {
+            "title": "N3: Potência Inteira (Base^Exp)",
+            "category": "Nível 3 - Ciclos Iterativos",
+            "description": "Lê base B e expoente E e calcula B^E através de multiplicações sucessivas num ciclo.",
+            "difficulty": 3,
+            "file": "exercicio_3_2_potencia_inteira.vm"
+        },
+        {
+            "title": "N3: Sequência de Fibonacci (Primeiros N Termos)",
+            "category": "Nível 3 - Ciclos Iterativos",
+            "description": "Gera iterativamente os primeiros N termos da sequência de Fibonacci (0, 1, 1, 2, 3, 5, 8...).",
+            "difficulty": 3,
+            "file": "exercicio_3_3_fibonacci_iterativo.vm"
+        },
+        {
+            "title": "N3: Algoritmo de Euclides para o MDC",
+            "category": "Nível 3 - Ciclos Iterativos",
+            "description": "Calcula o Máximo Divisor Comum entre A e B usando divisões e restos sucessivos (Euclides).",
+            "difficulty": 3,
+            "file": "exercicio_3_4_mdc_euclides.vm"
+        },
+        {
+            "title": "N3: Contagem e Soma dos Dígitos de um Inteiro",
+            "category": "Nível 3 - Ciclos Iterativos",
+            "description": "Lê um número positivo e calcula o número de dígitos e a sua soma usando div 10 e mod 10.",
+            "difficulty": 3,
+            "file": "exercicio_3_5_soma_digitos.vm"
+        },
+        {
+            "title": "N4: Alocação Dinâmica e Média de um Array na Heap",
+            "category": "Nível 4 - Heap e Arrays",
+            "description": "Aloca dinamicamente N elementos na Struct Heap com allocn, lê valores e calcula soma e média.",
+            "difficulty": 4,
+            "file": "exemplo_4_array_heap_media.vm"
+        },
+        {
+            "title": "N4: Máximo e Mínimo de um Array na Heap",
+            "category": "Nível 4 - Heap e Arrays",
+            "description": "Aloca array na Heap e determina simultaneamente o valor máximo e mínimo dos elementos.",
+            "difficulty": 4,
+            "file": "exercicio_4_1_max_min_array.vm"
+        },
+        {
+            "title": "N4: Inversão In-Place de um Array na Heap",
+            "category": "Nível 4 - Heap e Arrays",
+            "description": "Inverte os elementos de um array na Heap diretamente na memória usando apontadores left e right.",
+            "difficulty": 4,
+            "file": "exercicio_4_2_inversao_array.vm"
+        },
+        {
+            "title": "N4: Pesquisa Linear com Índice na Heap",
+            "category": "Nível 4 - Heap e Arrays",
+            "description": "Procura uma chave K num array na Heap e devolve o índice da primeira ocorrência (ou -1).",
+            "difficulty": 4,
+            "file": "exercicio_4_3_pesquisa_linear.vm"
+        },
+        {
+            "title": "N5: Função Procedimental imprime_quadrado(x)",
+            "category": "Nível 5 - Funções e Recursividade",
+            "description": "Demonstra chamada de procedimento com pusha e call, acedendo ao argumento em fp[-1].",
+            "difficulty": 5,
+            "file": "exemplo_5_funcao_quadrado.vm"
+        },
+        {
+            "title": "N5: Função Máximo com Retorno de Valor",
+            "category": "Nível 5 - Funções e Recursividade",
+            "description": "Função que recebe 2 argumentos e substitui fp[-2] pelo maior valor retornado à pilha.",
+            "difficulty": 5,
+            "file": "exercicio_5_1_funcao_maximo.vm"
+        },
+        {
+            "title": "N5: Função Recursiva: Fatorial (N!)",
+            "category": "Nível 5 - Funções e Recursividade",
+            "description": "Implementa fat(n) = n * fat(n-1) recursivamente gerando frames na Call Stack.",
+            "difficulty": 5,
+            "file": "exercicio_5_2_fatorial_recursivo.vm"
+        },
+        {
+            "title": "N5: Procedimento Recursivo: Sequência de Fibonacci",
+            "category": "Nível 5 - Funções e Recursividade",
+            "description": "Implementação da função recursiva dupla fib(n) = fib(n-1) + fib(n-2) com call e return.",
+            "difficulty": 5,
+            "file": "exercicio_5_3_fibonacci_recursivo.vm"
+        },
+        {
+            "title": "Desafio: Ordenação de Array na Heap (Bubble Sort)",
+            "category": "Desafio Final Integrador",
+            "description": "Algoritmo completo de Bubble Sort ordenando crescentemente um array dinâmico na Struct Heap.",
+            "difficulty": 5,
+            "file": "desafio_bubble_sort.vm"
         }
-        
     ]
 }

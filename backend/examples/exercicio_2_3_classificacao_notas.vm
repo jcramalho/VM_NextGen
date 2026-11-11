@@ -1,0 +1,39 @@
+pushi 0    // gp[0]: nota
+
+start
+    pushs "Introduza a nota (0-20): "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // Testar se nota >= 16
+    pushg 0
+    pushi 16
+    supeq
+    jz testaraprovado
+
+    pushs "Classificacao: Excelente"
+    writes
+    writeln
+    jump fimnota
+
+testaraprovado:
+    // Testar se nota >= 10
+    pushg 0
+    pushi 10
+    supeq
+    jz reprovado
+
+    pushs "Classificacao: Aprovado"
+    writes
+    writeln
+    jump fimnota
+
+reprovado:
+    pushs "Classificacao: Reprovado"
+    writes
+    writeln
+
+fimnota:
+stop

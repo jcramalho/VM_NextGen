@@ -41,7 +41,7 @@ module.exports = {
        Line = Instruction  ([ \\t]* Comment)* 				
          / Comment 									
        
-       Instruction = info:Label ':'						{ labelsRead[info] = getInd(); }
+       Instruction = info:Label [ \t]* ':'				{ labelsRead[info] = getInd(); }
        	 / info:Inst_Atom 								{ codigos.push([lines, info]) }
          / func:Inst_Int _ info:Integer					{ codigos.push([lines, func, info]) }
          / "pushf" _ info:Float							{ codigos.push([lines, 58, info]) }
@@ -85,7 +85,7 @@ module.exports = {
        
        Comment = "//" [^\\n]*
        
-       Label "label" = [a-zA-Z0-9]+ { return text(); }
+       Label "label" = [a-zA-Z0-9_]+ { return text(); }
        
        String = '"' info:Content*  '"' { return info.join('') }
 

@@ -1,0 +1,42 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: fat (acumulador de produto)
+
+start
+    pushs "Introduza N para calcular N!: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // fat = 1
+    pushi 1
+    storeg 1
+
+loopfat:
+    // Enquanto N > 1
+    pushg 0
+    pushi 1
+    sup
+    jz fimfat
+
+    // fat = fat * N
+    pushg 1
+    pushg 0
+    mul
+    storeg 1
+
+    // N = N - 1
+    pushg 0
+    pushi 1
+    sub
+    storeg 0
+
+    jump loopfat
+
+fimfat:
+    pushs "Fatorial = "
+    writes
+    pushg 1
+    writei
+    writeln
+stop

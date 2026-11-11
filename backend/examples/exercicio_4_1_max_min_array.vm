@@ -1,0 +1,104 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: arr_addr
+pushi 0    // gp[2]: max_val
+pushi 0    // gp[3]: min_val
+pushi 0    // gp[4]: i
+pushi 0    // gp[5]: curr
+
+start
+    pushs "Tamanho N do array: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // Alocar N elementos na Struct Heap
+    pushg 0
+    allocn
+    storeg 1
+
+    // Ler elementos
+    pushi 0
+    storeg 4
+ller:
+    pushg 4
+    pushg 0
+    inf
+    jz fimler
+    pushg 1
+    pushg 4
+    pushs "Elemento do array: "
+    writes
+    read
+    atoi
+    storen
+    pushg 4
+    pushi 1
+    add
+    storeg 4
+    jump ller
+fimler:
+
+    // Inicializar max_val = arr[0] e min_val = arr[0]
+    pushg 1
+    pushi 0
+    loadn
+    storeg 2
+
+    pushg 1
+    pushi 0
+    loadn
+    storeg 3
+
+    // Percorrer de i = 1 ate N-1
+    pushi 1
+    storeg 4
+lbusca:
+    pushg 4
+    pushg 0
+    inf
+    jz fimbusca
+
+    // Carregar arr[i] e guardar na variavel local/global curr (gp[5])
+    pushg 1
+    pushg 4
+    loadn
+    storeg 5
+
+    // Testar se curr > max_val
+    pushg 5
+    pushg 2
+    sup
+    jz testmin
+    pushg 5
+    storeg 2
+
+testmin:
+    // Testar se curr < min_val
+    pushg 5
+    pushg 3
+    inf
+    jz proxelem
+    pushg 5
+    storeg 3
+
+proxelem:
+    pushg 4
+    pushi 1
+    add
+    storeg 4
+    jump lbusca
+
+fimbusca:
+    pushs "Valor Maximo = "
+    writes
+    pushg 2
+    writei
+    writeln
+
+    pushs "Valor Minimo = "
+    writes
+    pushg 3
+    writei
+    writeln
+stop

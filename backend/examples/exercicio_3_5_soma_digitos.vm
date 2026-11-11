@@ -1,0 +1,56 @@
+pushi 0    // gp[0]: num
+pushi 0    // gp[1]: conta_digitos
+pushi 0    // gp[2]: soma_digitos
+
+start
+    read
+    atoi
+    storeg 0
+
+    pushi 0
+    storeg 1
+    pushi 0
+    storeg 2
+
+loopdig:
+    // Enquanto num > 0
+    pushg 0
+    pushi 0
+    sup
+    jz fimdig
+
+    // soma = soma + (num % 10)
+    pushg 2
+    pushg 0
+    pushi 10
+    mod
+    add
+    storeg 2
+
+    // conta = conta + 1
+    pushg 1
+    pushi 1
+    add
+    storeg 1
+
+    // num = num / 10
+    pushg 0
+    pushi 10
+    div
+    storeg 0
+
+    jump loopdig
+
+fimdig:
+    pushs "Contagem de digitos: "
+    writes
+    pushg 1
+    writei
+    writeln
+
+    pushs "Soma dos digitos: "
+    writes
+    pushg 2
+    writei
+    writeln
+stop

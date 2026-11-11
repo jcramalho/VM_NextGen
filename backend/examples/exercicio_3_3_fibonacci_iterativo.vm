@@ -1,0 +1,57 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: a = 0
+pushi 0    // gp[2]: b = 1
+pushi 0    // gp[3]: temp
+pushi 0    // gp[4]: contador i
+
+start
+    read
+    atoi
+    storeg 0
+
+    // Inicializar a=0, b=1, i=0
+    pushi 0
+    storeg 1
+    pushi 1
+    storeg 2
+    pushi 0
+    storeg 4
+
+loopfib:
+    // Enquanto i < N
+    pushg 4
+    pushg 0
+    inf
+    jz fimfib
+
+    // Imprimir a
+    pushg 1
+    writei
+    pushs " "
+    writes
+
+    // temp = a + b
+    pushg 1
+    pushg 2
+    add
+    storeg 3
+
+    // a = b
+    pushg 2
+    storeg 1
+
+    // b = temp
+    pushg 3
+    storeg 2
+
+    // i = i + 1
+    pushg 4
+    pushi 1
+    add
+    storeg 4
+
+    jump loopfib
+
+fimfib:
+    writeln
+stop

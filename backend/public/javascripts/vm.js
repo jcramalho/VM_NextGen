@@ -457,7 +457,7 @@ module.exports = {
             case 44: //dupn
               if (operand_stack.length >= frame_pointer + 2){
                 const n = operand_stack.pop()
-                const v = operand_stack.pop()
+                const v = operand_stack[operand_stack.length - 1]
                   for (let i=0; i < n; i++){
                     operand_stack.push(v)
                   }
@@ -524,9 +524,9 @@ module.exports = {
 
             case 52: //dup
               if (operand_stack.length >= frame_pointer + 1){
-                const v = operand_stack.pop();
+                const v = operand_stack[operand_stack.length - 1];
                 for (let i=0; i < c[2]; i++){
-                  operand_stack.push(v)
+                  operand_stack.push(v);
                 }
               } else error = 'Segmentation Fault: dup - elements missing'
               break

@@ -1,0 +1,139 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: array_addr
+pushi 0    // gp[2]: i (ciclo externo)
+pushi 0    // gp[3]: j (ciclo interno)
+pushi 0    // gp[4]: temp_a
+pushi 0    // gp[5]: temp_b
+
+start
+    pushs "=== BUBBLE SORT NA EWVM ==="
+    writes
+    writeln
+    pushs "Numero de elementos: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // Alocar array na Heap
+    pushg 0
+    allocn
+    storeg 1
+
+    // Leitura dos N elementos
+    pushi 0
+    storeg 2
+loopin:
+    pushg 2
+    pushg 0
+    inf
+    jz fimin
+    pushg 1
+    pushg 2
+    read
+    atoi
+    storen
+    pushg 2
+    pushi 1
+    add
+    storeg 2
+    jump loopin
+fimin:
+
+    // Ciclo Externo: i de 0 ate N - 1
+    pushi 0
+    storeg 2
+loopext:
+    pushg 2
+    pushg 0
+    pushi 1
+    sub
+    inf
+    jz printordenado
+
+    // Ciclo Interno: j de 0 ate N - i - 2
+    pushi 0
+    storeg 3
+loopint:
+    pushg 3
+    pushg 0
+    pushg 2
+    sub
+    pushi 1
+    sub
+    inf
+    jz fimloopint
+
+    // temp_a = arr[j]
+    pushg 1
+    pushg 3
+    loadn
+    storeg 4
+
+    // temp_b = arr[j + 1]
+    pushg 1
+    pushg 3
+    pushi 1
+    add
+    loadn
+    storeg 5
+
+    // Se arr[j] > arr[j + 1] -> Trocar!
+    pushg 4
+    pushg 5
+    sup
+    jz semtroca
+
+    // arr[j] = temp_b
+    pushg 1
+    pushg 3
+    pushg 5
+    storen
+
+    // arr[j + 1] = temp_a
+    pushg 1
+    pushg 3
+    pushi 1
+    add
+    pushg 4
+    storen
+
+semtroca:
+    pushg 3
+    pushi 1
+    add
+    storeg 3
+    jump loopint
+
+fimloopint:
+    pushg 2
+    pushi 1
+    add
+    storeg 2
+    jump loopext
+
+printordenado:
+    pushs "Array ordenado: "
+    writes
+    pushi 0
+    storeg 2
+loopout:
+    pushg 2
+    pushg 0
+    inf
+    jz fimout
+    pushg 1
+    pushg 2
+    loadn
+    writei
+    pushs " "
+    writes
+    pushg 2
+    pushi 1
+    add
+    storeg 2
+    jump loopout
+
+fimout:
+    writeln
+stop

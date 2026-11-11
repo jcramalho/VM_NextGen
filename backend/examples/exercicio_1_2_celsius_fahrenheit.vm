@@ -1,0 +1,28 @@
+pushi 0    // gp[0]: Celsius
+
+start
+    pushs "Temperatura em Celsius (inteiro): "
+    writes
+    read
+    atoi
+    storeg 0
+
+    pushs "Temperatura em Fahrenheit: "
+    writes
+    
+    // Obter Celsius e converter para Float
+    pushg 0
+    itof
+    
+    // Multiplicar por 1.8
+    pushf 1.8
+    fmul
+    
+    // Somar 32.0
+    pushf 32.0
+    fadd
+    
+    // Imprimir resultado real
+    writef
+    writeln
+stop

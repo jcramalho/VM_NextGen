@@ -1,0 +1,47 @@
+pushi 0    // gp[0]: A
+pushi 0    // gp[1]: B
+pushi 0    // gp[2]: C
+pushi 0    // gp[3]: max
+
+start
+    // Leitura de A, B, C
+    read
+    atoi
+    storeg 0
+
+    read
+    atoi
+    storeg 1
+
+    read
+    atoi
+    storeg 2
+
+    // Inicializar max = A
+    pushg 0
+    storeg 3
+
+    // Se B > max entao max = B
+    pushg 1
+    pushg 3
+    sup
+    jz checkc
+    pushg 1
+    storeg 3
+
+checkc:
+    // Se C > max entao max = C
+    pushg 2
+    pushg 3
+    sup
+    jz printmax
+    pushg 2
+    storeg 3
+
+printmax:
+    pushs "O valor maximo entre os 3 e: "
+    writes
+    pushg 3
+    writei
+    writeln
+stop

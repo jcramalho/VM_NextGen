@@ -1,0 +1,73 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: Endereco base do array na Heap
+pushi 0    // gp[2]: soma acumulada
+pushi 0    // gp[3]: contador i
+
+start
+    // 1. Ler N
+    pushs "Tamanho do array (N): "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // 2. Alocar array na Heap de tamanho N
+    pushg 0
+    allocn
+    storeg 1
+
+    // 3. Ciclo de Leitura
+    pushi 0
+    storeg 3
+loopread:
+    pushg 3
+    pushg 0
+    inf
+    jz fimread
+
+    pushg 1    // Endereço
+    pushg 3    // Índice
+    read
+    atoi       // Valor lido
+    storen     // a[i] = valor
+
+    pushg 3
+    pushi 1
+    add
+    storeg 3
+    jump loopread
+fimread:
+
+    // 4. Ciclo de Soma
+    pushi 0
+    storeg 2    // soma = 0
+    pushi 0
+    storeg 3    // i = 0
+loopsoma:
+    pushg 3
+    pushg 0
+    inf
+    jz fimsomaarr
+
+    // Obter a[i]
+    pushg 1    // Endereço
+    pushg 3    // Índice
+    loadn      // Empilha a[i]
+
+    pushg 2
+    add
+    storeg 2   // soma = soma + a[i]
+
+    pushg 3
+    pushi 1
+    add
+    storeg 3
+    jump loopsoma
+fimsomaarr:
+
+    pushs "Soma dos elementos do array: "
+    writes
+    pushg 2
+    writei
+    writeln
+stop

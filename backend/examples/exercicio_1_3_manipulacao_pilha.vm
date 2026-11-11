@@ -1,0 +1,22 @@
+start
+    pushs "Introduza x: "
+    writes
+    read
+    atoi       // Stack: [x]
+
+    // Queremos calcular 2*x^2 + 5*x
+    // Duplicar x para obter 3 copias na pilha
+    dup 3      // Stack: [x, x, x]
+    mul        // Stack: [x, x^2]
+    pushi 2
+    mul        // Stack: [x, 2*x^2]
+    swap       // Stack: [2*x^2, x]
+    pushi 5
+    mul        // Stack: [2*x^2, 5*x]
+    add        // Stack: [2*x^2 + 5*x]
+
+    pushs "Resultado de 2*x^2 + 5*x = "
+    writes
+    writei
+    writeln
+stop

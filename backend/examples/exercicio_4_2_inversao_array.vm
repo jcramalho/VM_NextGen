@@ -1,0 +1,116 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: addr
+pushi 0    // gp[2]: left
+pushi 0    // gp[3]: right
+pushi 0    // gp[4]: temp_left
+pushi 0    // gp[5]: temp_right
+
+start
+    pushs "Tamanho N do array: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    pushg 0
+    allocn
+    storeg 1
+
+    // Ler array
+    pushi 0
+    storeg 2
+linread:
+    pushg 2
+    pushg 0
+    inf
+    jz fiminread
+    pushg 1
+    pushg 2
+    pushs "Elemento do array: "
+    writes
+    read
+    atoi
+    storen
+    pushg 2
+    pushi 1
+    add
+    storeg 2
+    jump linread
+fiminread:
+
+    // left = 0, right = N - 1
+    pushi 0
+    storeg 2
+    pushg 0
+    pushi 1
+    sub
+    storeg 3
+
+loopinv:
+    // Enquanto left < right
+    pushg 2
+    pushg 3
+    inf
+    jz printinv
+
+    // temp_left = arr[left]
+    pushg 1
+    pushg 2
+    loadn
+    storeg 4
+
+    // temp_right = arr[right]
+    pushg 1
+    pushg 3
+    loadn
+    storeg 5
+
+    // arr[left] = temp_right
+    pushg 1
+    pushg 2
+    pushg 5
+    storen
+
+    // arr[right] = temp_left
+    pushg 1
+    pushg 3
+    pushg 4
+    storen
+
+    // left = left + 1; right = right - 1
+    pushg 2
+    pushi 1
+    add
+    storeg 2
+
+    pushg 3
+    pushi 1
+    sub
+    storeg 3
+
+    jump loopinv
+
+printinv:
+    pushs "Array invertido: "
+    writes
+    pushi 0
+    storeg 2
+lp:
+    pushg 2
+    pushg 0
+    inf
+    jz fimp
+    pushg 1
+    pushg 2
+    loadn
+    writei
+    pushs " "
+    writes
+    pushg 2
+    pushi 1
+    add
+    storeg 2
+    jump lp
+fimp:
+    writeln
+stop

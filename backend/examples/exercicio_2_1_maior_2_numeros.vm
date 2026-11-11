@@ -1,0 +1,39 @@
+pushi 0    // gp[0]: A
+pushi 0    // gp[1]: B
+
+start
+    pushs "Introduza o valor A: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    pushs "Introduza o valor B: "
+    writes
+    read
+    atoi
+    storeg 1
+
+    // Comparar se A > B
+    pushg 0
+    pushg 1
+    sup
+    jz bmaiorouigual
+
+amaior:
+    pushs "O maior numero e A = "
+    writes
+    pushg 0
+    writei
+    writeln
+    jump fimex21
+
+bmaiorouigual:
+    pushs "O maior numero e B = "
+    writes
+    pushg 1
+    writei
+    writeln
+
+fimex21:
+stop

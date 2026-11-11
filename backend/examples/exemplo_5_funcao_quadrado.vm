@@ -1,0 +1,37 @@
+start
+    pushs "Programa principal a chamar funcao..."
+    writes
+    writeln
+
+    // Empilhar argumento = 9
+    pushi 9
+
+    // Empilhar endereco e chamar funcao
+    pusha quadrado
+    call
+
+    pushs "Regresso ao programa principal com sucesso!"
+    writes
+    writeln
+stop
+
+// -------------------------------------------------------------------
+// Funcao quadrado(x): imprime x e x^2
+// Argumento x esta acessivel em fp[-1]
+// -------------------------------------------------------------------
+quadrado:
+    pushs "Dentro da funcao -> Quadrado de "
+    writes
+    pushfp
+    load -1
+    writei
+    pushs " e: "
+    writes
+    pushfp
+    load -1
+    pushfp
+    load -1
+    mul
+    writei
+    writeln
+    return

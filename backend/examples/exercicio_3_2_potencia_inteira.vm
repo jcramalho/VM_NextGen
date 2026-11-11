@@ -1,0 +1,45 @@
+pushi 0    // gp[0]: base B
+pushi 0    // gp[1]: exp E
+pushi 0    // gp[2]: res (acumulador inicializado a 1)
+
+start
+    read
+    atoi
+    storeg 0
+
+    read
+    atoi
+    storeg 1
+
+    // res = 1
+    pushi 1
+    storeg 2
+
+looppot:
+    // Enquanto E > 0
+    pushg 1
+    pushi 0
+    sup
+    jz fimpot
+
+    // res = res * B
+    pushg 2
+    pushg 0
+    mul
+    storeg 2
+
+    // E = E - 1
+    pushg 1
+    pushi 1
+    sub
+    storeg 1
+
+    jump looppot
+
+fimpot:
+    pushs "Resultado da potencia: "
+    writes
+    pushg 2
+    writei
+    writeln
+stop

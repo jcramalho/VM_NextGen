@@ -1,0 +1,47 @@
+pushi 0    // gp[0]: N
+pushi 0    // gp[1]: i (contador)
+pushi 0    // gp[2]: soma (acumulador)
+
+start
+    pushs "Introduza N: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // i = 1
+    pushi 1
+    storeg 1
+
+    // soma = 0
+    pushi 0
+    storeg 2
+
+ciclosoma:
+    // Condição: i <= N
+    pushg 1
+    pushg 0
+    infeq
+    jz fimsoma
+
+    // soma = soma + i
+    pushg 2
+    pushg 1
+    add
+    storeg 2
+
+    // i = i + 1
+    pushg 1
+    pushi 1
+    add
+    storeg 1
+
+    jump ciclosoma
+
+fimsoma:
+    pushs "Somatorio de 1 a N = "
+    writes
+    pushg 2
+    writei
+    writeln
+stop

@@ -121,81 +121,179 @@
       </div>
     </div>
 
-    <div v-if="showExamples" class="w3-modal" style="display:block;">
-      <div class="w3-modal-content w3-animate-zoom w3-card-4 w3-round-large" style="width:700px; padding:20px;">
+    <div v-if="showExamples" class="w3-modal" style="display:block; z-index:9990;">
+      <div class="w3-modal-content w3-animate-zoom w3-card-4 w3-round-large" style="width:750px; max-width:96%; padding:20px;">
         <header class="w3-container">
-          <span @click="showExamples = false" class="w3-button w3-display-topright w3-round-large">&times;</span>
-          <h2 class="w3-text-blue-grey"><b>Examples</b></h2>
+          <span @click="showExamples = false" class="w3-button w3-display-topright w3-round-large w3-hover-red">&times;</span>
+          <h2 class="w3-text-blue-grey"><b>Catálogo de Exemplos EWVM</b></h2>
           
           <div class="w3-margin-bottom">
-            <span class="w3-text-blue-grey"><b>Order By:</b></span>
-            <button @click="fetchExamples('')" class="w3-button w3-small w3-border w3-round w3-margin-left">Title</button>
-            <button @click="fetchExamples('cat')" class="w3-button w3-small w3-border w3-round w3-margin-left">Category</button>
-            <button @click="fetchExamples('dif')" class="w3-button w3-small w3-border w3-round w3-margin-left">Difficulty</button>
+            <span class="w3-text-blue-grey"><b>Ordenar por:</b></span>
+            <button @click="fetchExamples('')" class="w3-button w3-small w3-border w3-round w3-margin-left">Título</button>
+            <button @click="fetchExamples('cat')" class="w3-button w3-small w3-border w3-round w3-margin-left">Categoria</button>
+            <button @click="fetchExamples('dif')" class="w3-button w3-small w3-border w3-round w3-margin-left">Dificuldade</button>
           </div>
         </header>
 
-        <div class="w3-container" style="max-height:450px; overflow:auto;">
+        <div class="w3-container" style="max-height:480px; overflow:auto;">
           <div v-if="!Array.isArray(examplesList)">
             <div v-for="(group, key) in examplesList" :key="key" class="w3-margin-bottom">
               <h3 class="w3-border-bottom w3-text-blue-grey" style="padding-bottom:5px;"><b>{{ key }}</b></h3>
               <div v-for="e in group" :key="e.title" class="w3-padding-small w3-hover-light-grey w3-border-bottom" style="display:flex; justify-content:space-between; align-items:center;">
-                <div>
-                  <b class="w3-text-dark-grey">{{ e.title }}</b><br>
+                <div style="flex:1; padding-right:10px;">
+                  <b class="w3-text-dark-grey">{{ e.title }}</b>
+                  <span v-if="e.difficulty" class="w3-tag w3-round w3-small w3-teal w3-margin-left">Dif: {{ e.difficulty }}</span><br>
                   <small class="w3-text-grey">{{ e.description }}</small>
                 </div>
-                <button @click="loadExampleCode(e.code)" class="w3-button w3-small w3-blue-grey w3-round">Load</button>
+                <button @click="loadExampleCode(e.code)" class="w3-button w3-small w3-blue-grey w3-round">Carregar</button>
               </div>
             </div>
           </div>
 
           <div v-else>
             <div v-for="e in examplesList" :key="e.title" class="w3-padding-small w3-hover-light-grey w3-border-bottom" style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <b class="w3-text-dark-grey">{{ e.title }}</b> <span class="w3-tag w3-round w3-small w3-indigo">{{ e.category }}</span><br>
+              <div style="flex:1; padding-right:10px;">
+                <b class="w3-text-dark-grey">{{ e.title }}</b> 
+                <span class="w3-tag w3-round w3-small w3-indigo" style="margin-left:6px;">{{ e.category }}</span>
+                <span v-if="e.difficulty" class="w3-tag w3-round w3-small w3-teal" style="margin-left:4px;">Dif: {{ e.difficulty }}</span><br>
                 <small class="w3-text-grey">{{ e.description }}</small>
               </div>
-              <button @click="loadExampleCode(e.code)" class="w3-button w3-small w3-blue-grey w3-round">Load</button>
+              <button @click="loadExampleCode(e.code)" class="w3-button w3-small w3-blue-grey w3-round">Carregar</button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div v-if="showManual" class="w3-modal" style="display:block;">
-      <div class="w3-modal-content w3-animate-zoom w3-card-4 w3-round-large" style="width:800px; padding:20px;">
-        <header class="w3-container">
-          <span @click="showManual = false" class="w3-button w3-display-topright w3-round-large">&times;</span>
-          <h2 class="w3-text-blue-grey"><b>Instruction Documentation</b></h2>
+    <div v-if="showManual" class="w3-modal" style="display:block; z-index:9990;">
+      <div class="w3-modal-content w3-animate-zoom w3-card-4 w3-round-large" style="width:920px; max-width:96%; padding:20px; max-height:90vh; display:flex; flex-direction:column;">
+        <header class="w3-container" style="border-bottom:1px solid #e0e0e0; padding-bottom:12px;">
+          <span @click="showManual = false" class="w3-button w3-display-topright w3-round-large w3-hover-red">&times;</span>
+          <h2 class="w3-text-blue-grey" style="margin:0 0 10px 0;"><b>Documentação EWVM (v2.0)</b></h2>
+          
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button 
+              class="w3-button w3-small w3-round" 
+              :class="activeManualTab === 'isa' ? 'w3-blue-grey' : 'w3-light-grey'" 
+              @click="activeManualTab = 'isa'">
+              <b>📖 Manual de Instruções (ISA)</b>
+            </button>
+            <button 
+              class="w3-button w3-small w3-round" 
+              :class="activeManualTab === 'arch' ? 'w3-blue-grey' : 'w3-light-grey'" 
+              @click="activeManualTab = 'arch'">
+              <b>🏛️ Arquitetura da Máquina</b>
+            </button>
+            <button 
+              class="w3-button w3-small w3-round" 
+              :class="activeManualTab === 'patterns' ? 'w3-blue-grey' : 'w3-light-grey'" 
+              @click="activeManualTab = 'patterns'">
+              <b>💡 Padrões e Conceitos Teóricos</b>
+            </button>
+          </div>
         </header>
         
-        <div class="w3-container" style="max-height:500px; overflow:auto; padding-top:10px;">
-          <div v-for="(category, index) in manualDocs" :key="index" class="w3-margin-bottom">
-            <h3 class="w3-blue-grey w3-padding-small w3-round"><b>{{ category[0] }}</b></h3>
-            
-            <div style="padding-left:15px;">
-              <div v-if="Array.isArray(category[1])">
-                <div v-for="(sub, subIdx) in category[1]" :key="subIdx" class="w3-margin-bottom">
-                  <h4 class="w3-text-indigo"><b>{{ sub[0] }}</b></h4>
-                  <table class="w3-table-all w3-small">
-                    <tr v-for="(desc, inst) in sub[1]" :key="inst">
-                      <td style="width:120px;"><b class="w3-text-red">{{ inst }}</b></td>
-                      <td>{{ desc }}</td>
-                    </tr>
-                  </table>
+        <div class="w3-container" style="overflow-y:auto; flex:1; padding-top:15px;">
+          
+          <!-- TAB 1: MANUAL ISA -->
+          <div v-if="activeManualTab === 'isa'">
+            <div class="w3-margin-bottom" style="display:flex; align-items:center; gap:10px;">
+              <input 
+                v-model="manualSearchQuery" 
+                class="w3-input w3-border w3-round" 
+                placeholder="🔍 Pesquisar instrução, argumento ou descrição (ex: ADD, ALLOCN, JZ, CALL)..." 
+                style="flex:1;"
+              />
+              <button v-if="manualSearchQuery" @click="manualSearchQuery = ''" class="w3-button w3-small w3-border w3-round w3-light-grey">Limpar</button>
+            </div>
+
+            <div v-if="filteredCategories.length === 0" class="w3-panel w3-light-grey w3-round w3-center w3-padding-16">
+              <p class="w3-text-grey">Nenhuma instrução encontrada para "<b>{{ manualSearchQuery }}</b>".</p>
+            </div>
+
+            <div v-for="(category, index) in filteredCategories" :key="index" class="w3-margin-bottom">
+              <h4 class="w3-blue-grey w3-padding-small w3-round" style="margin-bottom:6px;">
+                <b>{{ category.name }}</b> <small class="w3-right w3-text-light-grey">{{ category.instructions.length }} instruções</small>
+              </h4>
+              
+              <table class="w3-table-all w3-small w3-hoverable w3-bordered">
+                <thead>
+                  <tr class="w3-light-blue">
+                    <th style="width:130px;">Instrução</th>
+                    <th style="width:120px;">Argumentos</th>
+                    <th style="width:260px;">Efeito na Pilha</th>
+                    <th>Descrição</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="inst in category.instructions" :key="inst.op">
+                    <td><b class="w3-text-red" style="font-family:monospace; font-size:1.05em;">{{ inst.op }}</b></td>
+                    <td><code style="background:#f1f1f1; padding:1px 4px; border-radius:3px;">{{ inst.args }}</code></td>
+                    <td><span class="w3-text-indigo" style="font-family:monospace; font-size:0.92em;">{{ inst.stack }}</span></td>
+                    <td>{{ inst.desc }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 2: ARQUITETURA -->
+          <div v-if="activeManualTab === 'arch' && docArchitecture">
+            <div class="w3-panel w3-leftbar w3-border-blue-grey w3-pale-blue w3-padding">
+              <p style="margin:0;">{{ docArchitecture.overview }}</p>
+            </div>
+
+            <h4 class="w3-text-blue-grey"><b>Diagrama Arquitetural da EWVM</b></h4>
+            <pre class="w3-code w3-border w3-round" style="background:#1e293b; color:#38bdf8; font-family:monospace; font-size:11.5px; line-height:1.2; overflow-x:auto; padding:12px;">{{ docArchitecture.diagram }}</pre>
+
+            <h4 class="w3-text-blue-grey w3-margin-top"><b>1. Registos Principais</b></h4>
+            <div class="w3-row-padding" style="margin-left:-8px; margin-right:-8px;">
+              <div v-for="reg in docArchitecture.registers" :key="reg.name" class="w3-half w3-margin-bottom">
+                <div class="w3-card w3-round w3-white w3-padding-small w3-border" style="height:100%;">
+                  <span class="w3-tag w3-round w3-indigo" style="font-family:monospace; font-weight:bold;">{{ reg.name }}</span>
+                  <b class="w3-margin-left w3-text-dark-grey">{{ reg.fullName }}</b>
+                  <p class="w3-small w3-text-grey" style="margin:6px 0 0 0;">{{ reg.desc }}</p>
                 </div>
               </div>
+            </div>
 
-              <div v-else>
-                <table class="w3-table-all w3-small">
-                  <tr v-for="(desc, inst) in category[1]" :key="inst">
-                    <td style="width:120px;"><b class="w3-text-red">{{ inst }}</b></td>
-                    <td>{{ desc }}</td>
-                  </tr>
-                </table>
+            <h4 class="w3-text-blue-grey w3-margin-top"><b>2. Espaços de Memória</b></h4>
+            <div class="w3-margin-bottom">
+              <div v-for="mem in docArchitecture.memoryAreas" :key="mem.name" class="w3-card w3-round w3-white w3-padding-small w3-border w3-margin-bottom">
+                <b class="w3-text-indigo">{{ mem.name }}</b>
+                <p class="w3-small w3-text-grey" style="margin:4px 0 0 0;">{{ mem.desc }}</p>
+              </div>
+            </div>
+
+            <h4 class="w3-text-blue-grey w3-margin-top"><b>3. Esqueleto Canónico de um Programa EWVM</b></h4>
+            <div class="w3-margin-bottom">
+              <div v-for="phase in docArchitecture.programStructure" :key="phase.phase" class="w3-padding-small w3-border-bottom">
+                <b class="w3-text-blue-grey">{{ phase.phase }}:</b>
+                <span class="w3-small w3-text-grey w3-margin-left">{{ phase.desc }}</span>
               </div>
             </div>
           </div>
+
+          <!-- TAB 3: PADRÕES TEÓRICOS -->
+          <div v-if="activeManualTab === 'patterns'">
+            <div class="w3-panel w3-leftbar w3-border-blue-grey w3-pale-blue w3-padding">
+              <p style="margin:0;">Padrões de tradução de alto nível para Assembly da EWVM, com exemplos diretamente carregáveis no editor.</p>
+            </div>
+
+            <div v-for="(p, pIdx) in docPatterns" :key="pIdx" class="w3-card w3-round w3-white w3-border w3-margin-bottom" style="overflow:hidden;">
+              <header class="w3-container w3-light-grey" style="display:flex; justify-content:space-between; align-items:center; padding:8px 16px;">
+                <h4 class="w3-text-blue-grey" style="margin:0;"><b>{{ p.title }}</b></h4>
+                <button @click="loadPatternCode(p.code)" class="w3-button w3-tiny w3-blue-grey w3-round">
+                  <i class="fa fa-code"></i> Carregar no Editor
+                </button>
+              </header>
+              <div class="w3-container w3-padding">
+                <p class="w3-small w3-text-dark-grey" style="margin-top:0;">{{ p.desc }}</p>
+                <pre class="w3-code w3-border w3-round" style="background:#0f172a; color:#a5f3fc; font-family:monospace; font-size:12px; margin:0; overflow-x:auto; padding:10px;">{{ p.code }}</pre>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -261,8 +359,11 @@ const showExamples = ref(false)
 const showManual = ref(false)
 const showCredits = ref(false)
 
-const manualDocs = ref([])
+const manualDocs = ref(null)
 const examplesList = ref([])
+
+const activeManualTab = ref('isa')
+const manualSearchQuery = ref('')
 
 // Variáveis para o Monaco Editor
 const editorRef = shallowRef(null)
@@ -279,6 +380,47 @@ const currentStringHeap = computed(() => currentFrame.value ? currentFrame.value
 const currentStructHeap = computed(() => currentFrame.value ? currentFrame.value[4] : [])
 const currentFP = computed(() => (currentFrame.value && currentFrame.value[5] !== -1) ? currentFrame.value[5] : '-')
 const currentLine = computed(() => currentFrame.value ? currentFrame.value[0] : 0) // Agora declarado DEPOIS de currentFrame
+
+// Documentação Dinâmica (ISA, Arquitetura e Padrões)
+const docCategories = computed(() => {
+  if (!manualDocs.value) return []
+  if (Array.isArray(manualDocs.value)) {
+    return manualDocs.value.map(cat => ({
+      name: cat[0],
+      instructions: Array.isArray(cat[1]) 
+        ? cat[1].flatMap(sub => Object.entries(sub[1] || {}).map(([op, desc]) => ({ op, args: '-', stack: '-', desc })))
+        : Object.entries(cat[1] || {}).map(([op, desc]) => ({ op, args: '-', stack: '-', desc }))
+    }))
+  }
+  return manualDocs.value.categories || []
+})
+
+const docArchitecture = computed(() => {
+  return manualDocs.value?.architecture || null
+})
+
+const docPatterns = computed(() => {
+  return manualDocs.value?.patterns || []
+})
+
+const filteredCategories = computed(() => {
+  const query = manualSearchQuery.value.trim().toLowerCase()
+  if (!query) return docCategories.value
+
+  return docCategories.value.map(cat => {
+    const matching = (cat.instructions || []).filter(inst => {
+      const op = (inst.op || '').toLowerCase()
+      const desc = (inst.desc || '').toLowerCase()
+      const stack = (inst.stack || '').toLowerCase()
+      const args = (inst.args || '').toLowerCase()
+      return op.includes(query) || desc.includes(query) || stack.includes(query) || args.includes(query)
+    })
+    return {
+      ...cat,
+      instructions: matching
+    }
+  }).filter(cat => cat.instructions.length > 0)
+})
 
 
 // ==========================================
@@ -399,6 +541,14 @@ const executeAPI = async (isResume) => {
       
       needsInput.value = result.data.input === 1
       inputValue.value = ''
+    } else {
+      if (result.data?.terminal && result.data.terminal.length > 0) {
+        terminal.value = result.data.terminal
+      } else {
+        terminal.value = ["Erro na compilação ou execução do programa."]
+      }
+      animation.value = []
+      currentIndex.value = 0
     }
   } catch (err) {
     terminal.value.push("Erro de rede ao comunicar com o processador VM.")
@@ -431,6 +581,16 @@ const loadExampleCode = (exampleCode) => {
     terminal.value = []
     currentIndex.value = 0
     showExamples.value = false
+  }
+}
+
+const loadPatternCode = (patternCode) => {
+  if (patternCode) {
+    code.value = patternCode
+    animation.value = []
+    terminal.value = []
+    currentIndex.value = 0
+    showManual.value = false
   }
 }
 

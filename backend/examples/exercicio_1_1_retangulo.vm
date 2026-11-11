@@ -1,0 +1,39 @@
+// Alocação de variáveis globais
+pushi 0    // gp[0]: base
+pushi 0    // gp[1]: altura
+
+start
+    // 1. Ler base
+    pushs "Introduza a base: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // 2. Ler altura
+    pushs "Introduza a altura: "
+    writes
+    read
+    atoi
+    storeg 1
+
+    // 3. Calcular e imprimir o perímetro: 2 * (b + h)
+    pushs "Perimetro: "
+    writes
+    pushi 2
+    pushg 0
+    pushg 1
+    add
+    mul
+    writei
+    writeln
+
+    // 4. Calcular e imprimir a área: b * h
+    pushs "Area: "
+    writes
+    pushg 0
+    pushg 1
+    mul
+    writei
+    writeln
+stop

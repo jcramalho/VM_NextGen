@@ -1,0 +1,31 @@
+pushi 0    // gp[0]: numero lido
+
+start
+    pushs "Introduza um numero inteiro: "
+    writes
+    read
+    atoi
+    storeg 0
+
+    // Testar se numero % 2 == 0
+    pushg 0
+    pushi 2
+    mod
+    
+    // Se mod == 0, entao e par.
+    // jz salta se for zero, logo salta se for par!
+    jz epar
+
+eimpar:
+    pushs "O numero e IMPAR."
+    writes
+    writeln
+    jump fim
+
+epar:
+    pushs "O numero e PAR."
+    writes
+    writeln
+
+fim:
+stop
